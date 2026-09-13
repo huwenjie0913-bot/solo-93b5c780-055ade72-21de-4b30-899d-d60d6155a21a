@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>航片覆盖校核台</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>航片覆盖校核台</h1>
+  <div class="proj-bar">
+    <select id="projectSelect"></select>
+    <button id="btnNewProject">新建项目</button>
+    <label class="upload-btn" id="uploadLabel">批量导入照片
+      <input type="file" id="fileInput" multiple accept="image/*" hidden>
+    </label>
+    <button id="btnParams">航摄参数</button>
+    <a id="btnCsv" class="btn-link" href="#" download>导出报告 CSV</a>
+    <a id="btnJson" class="btn-link" href="#" target="_blank">报告 JSON</a>
+  </div>
+</header>
+
+<main>
+  <section id="canvasWrap">
+    <canvas id="cv"></canvas>
+    <div id="canvasHint">滚轮缩放 · 拖拽平移 · 点击足迹/风险标记查看详情</div>
+    <div id="legend">
+      <span><i class="sw ok"></i>正常覆盖</span>
+      <span><i class="sw gap"></i>断带</span>
+      <span><i class="sw low"></i>重叠不足</span>
+      <span><i class="sw dup"></i>疑似重复</span>
+      <span><i class="sw side"></i>旁向问题</span>
+      <span><i class="sw exc"></i>已排除</span>
+    </div>
+  </section>
+
+  <aside id="side">
+    <div class="panel">
+      <h2>风险区段 <span id="riskCount"></span></h2>
+      <ul id="riskList" class="risk-list"></ul>
+    </div>
+    <div class="panel" id="detailPanel">
+      <h2 id="detailTitle">详情</h2>
+      <div id="detailBody"><p class="muted">在画布或列表中选择风险区段 / 照片。</p></div>
+    </div>
+  </aside>
+</main>
+
+<dialog id="projectDialog">
+  <form method="dialog" id="projectForm">
+    <h3 id="projectDialogTitle">新建项目</h3>
+    <label>项目名称 <input name="name" required placeholder="例：城东 1:500 航测"></label>
+    <div class="grid2">
+      <label>飞行高度 (m, AGL) <input name="altitude" type="number" step="0.1" value="120" required></label>
+      <label>默认焦距 (mm) <input name="focal_default" type="number" step="0.01" value="8.8" required></label>
+      <label>传感器宽 (mm) <input name="sensor_w" type="number" step="0.01" value="13.2" required></label>
+      <label>传感器高 (mm) <input name="sensor_h" type="number" step="0.01" value="8.8" required></label>
+      <label>前向重叠阈值 (%) <input name="fwd_min" type="number" step="1" value="60" required></label>
+      <label>旁向重叠阈值 (%) <input name="side_min" type="number" step="1" value="30" required></label>
+    </div>
+    <menu>
+      <button value="cancel" formnovalidate>取消</button>
+      <button id="projectSubmit" value="ok">保存</button>
+    </menu>
+  </form>
+</dialog>
+
+<dialog id="correctDialog">
+  <form method="dialog" id="correctForm">
+    <h3>人工补正坐标 — 照片 <span id="correctPhotoId"></span></h3>
+    <label>纬度 <input name="lat" type="number" step="0.0000001" min="-90" max="90" required></label>
+    <label>经度 <input name="lon" type="number" step="0.0000001" min="-180" max="180" required></label>
+    <label>备注 <input name="note" placeholder="依据：刺点/航线图…"></label>
+    <menu>
+      <button value="cancel" formnovalidate>取消</button>
+      <button id="correctClear" value="clear" formnovalidate>清除补正</button>
+      <button id="correctSubmit" value="ok">保存</button>
+    </menu>
+  </form>
+</dialog>
+
+<div id="toast"></div>
+<script src="app.js"></script>
+</body>
+</html>
