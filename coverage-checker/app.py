@@ -175,9 +175,13 @@ def _save_baseline(pid, label):
                            label or f"基准航次 {time.strftime('%m-%d %H:%M')}",
                            json.dumps(params, ensure_ascii=False))
     for p in photos:
+        # 快照写入“当时生效”的坐标：人工补正（eff_*）优先，未补正则为 EXIF 坐标，
+        # 否则为 None。这样补拍配对、足迹与差异都按校核员补正后的位置计算。
         fields = {k: p.get(k) for k in
-                  ("filename", "stored", "taken_at", "taken_at_ts", "lat", "lon",
+                  ("filename", "stored", "taken_at", "taken_at_ts",
                    "gps_alt", "focal", "img_w", "img_h", "excluded")}
+        fields["lat"] = p["eff_lat"]
+        fields["lon"] = p["eff_lon"]
         fields["origin_photo_id"] = p["id"]
         db.insert_sortie_photo(sid, pid, fields)
     # sortie_photos 的新 id 与分析结果一致（顺序插入、空表起步）
