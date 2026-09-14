@@ -176,6 +176,16 @@ def analyze(photos, params):
             p["strip_seq"] = i + 1
         strip_list.append({"id": si, "photo_ids": [p["id"] for p in sp]})
 
+    # ---- 每条前向边的间距/重叠率（同时供航次对比使用；风险判定在下方）----
+    for sp in strips:
+        for i in range(len(sp) - 1):
+            a, b = sp[i], sp[i + 1]
+            dist = haversine(a["eff_lat"], a["eff_lon"], b["eff_lat"], b["eff_lon"])
+            L = (a["fp_l"] + b["fp_l"]) / 2.0
+            a["next_id"] = b["id"]
+            a["fwd_dist"] = round(dist, 2)
+            a["fwd_overlap_pct"] = round((L - dist) / L * 100.0, 1)
+
     # ---- 前向重叠 / 断带 / 疑似重复 ----
     for sp in strips:
         for i in range(len(sp) - 1):
@@ -308,6 +318,8 @@ def analyze(photos, params):
             "img_w": q["img_w"], "img_h": q["img_h"],
             "strip_id": q.get("strip_id"), "strip_seq": q.get("strip_seq"),
             "heading": q.get("heading"), "fp_w": q.get("fp_w"), "fp_l": q.get("fp_l"),
+            "next_id": q.get("next_id"),
+            "fwd_dist": q.get("fwd_dist"), "fwd_overlap_pct": q.get("fwd_overlap_pct"),
         })
     return {"photos": out_photos, "strips": strip_list, "risks": risks}
 

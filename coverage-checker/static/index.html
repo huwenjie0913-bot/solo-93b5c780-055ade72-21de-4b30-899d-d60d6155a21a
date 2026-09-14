@@ -18,10 +18,16 @@
     <button id="btnParams">航摄参数</button>
     <a id="btnCsv" class="btn-link" href="#" download>导出报告 CSV</a>
     <a id="btnJson" class="btn-link" href="#" target="_blank">报告 JSON</a>
+    <span class="tab-sep"></span>
+    <div class="tabs">
+      <button id="tabSingle" class="tab active">单航次校核</button>
+      <button id="tabCompare" class="tab">航次对比</button>
+    </div>
   </div>
 </header>
 
-<main>
+<!-- ========== 单航次校核 ========== -->
+<main id="viewSingle" class="view">
   <section id="canvasWrap">
     <canvas id="cv"></canvas>
     <div id="canvasHint">滚轮缩放 · 拖拽平移 · 点击足迹/风险标记查看详情</div>
@@ -43,6 +49,67 @@
     <div class="panel" id="detailPanel">
       <h2 id="detailTitle">详情</h2>
       <div id="detailBody"><p class="muted">在画布或列表中选择风险区段 / 照片。</p></div>
+    </div>
+  </aside>
+</main>
+
+<!-- ========== 航次对比 ========== -->
+<main id="viewCompare" class="view hidden">
+  <section id="cmpCanvasWrap">
+    <canvas id="cvCompare"></canvas>
+    <div id="cmpHint">滚轮缩放 · 拖拽平移 · 点击配对/差异标记查看照片对</div>
+
+    <div id="cmpBar">
+      <button id="btnSaveBaseline">保存当前项目为基准航次</button>
+      <label class="upload-btn">导入补拍航片
+        <input type="file" id="cmpFileInput" multiple accept="image/*" hidden>
+      </label>
+      <label class="cmp-select">补拍航次
+        <select id="cmpReshootSelect"></select>
+      </label>
+      <button id="btnDeleteSortie" class="btn-danger">删除该补拍航次</button>
+      <a id="btnCmpCsv" class="btn-link" href="#" download>对比 CSV</a>
+      <a id="btnCmpJson" class="btn-link" href="#" target="_blank">对比 JSON</a>
+    </div>
+
+    <div id="cmpLegend">
+      <span><i class="sw base"></i>基准足迹/摄站</span>
+      <span><i class="sw reshoot"></i>补拍足迹/摄站</span>
+      <span><i class="sw cnew"></i>新增</span>
+      <span><i class="sw cmiss"></i>缺失</span>
+      <span><i class="sw cshift"></i>位置偏移</span>
+      <span><i class="sw cok"></i>风险已解决</span>
+      <span><i class="sw crisk"></i>新增/仍存在风险</span>
+    </div>
+
+    <div id="cmpFilters">
+      <span class="filter-title">航带</span>
+      <select id="cmpStripFilter"><option value="all">全部航带</option></select>
+      <span class="filter-title">风险类型</span>
+      <select id="cmpTypeFilter">
+        <option value="all">全部类型</option>
+        <option value="shifted">位置偏移</option>
+        <option value="new">补拍新增</option>
+        <option value="missing">补拍缺失</option>
+        <option value="risk_resolved">风险已解决</option>
+        <option value="risk_new">新增风险</option>
+        <option value="risk_persisted">风险仍存在</option>
+      </select>
+    </div>
+  </section>
+
+  <aside id="cmpSide">
+    <div class="panel" id="cmpSummaryPanel">
+      <h2>航次对比</h2>
+      <div id="cmpSummary"><p class="muted">先保存基准航次，再导入补拍航片。</p></div>
+    </div>
+    <div class="panel">
+      <h2>差异区段 <span id="cmpDiffCount"></span></h2>
+      <ul id="cmpDiffList" class="risk-list"></ul>
+    </div>
+    <div class="panel">
+      <h2 id="cmpDetailTitle">详情</h2>
+      <div id="cmpDetailBody"><p class="muted">在画布或差异列表中选择区段。</p></div>
     </div>
   </aside>
 </main>
@@ -82,5 +149,6 @@
 
 <div id="toast"></div>
 <script src="app.js"></script>
+<script src="compare.js"></script>
 </body>
 </html>

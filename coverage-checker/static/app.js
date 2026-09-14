@@ -55,6 +55,7 @@ async function openProject(pid) {
   fitView();
   renderAll();
   updateExportLinks();
+  document.dispatchEvent(new CustomEvent("projectchange", { detail: cur }));
 }
 async function refresh() {
   if (!cur) return;
